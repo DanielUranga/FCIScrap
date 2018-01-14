@@ -18,14 +18,12 @@ def download_month(date, fondo_id, clase_id):
     str_month_start = date.strftime('%Y-%m-%d')
     str_month_end = plus_one_month(date).strftime('%Y-%m-%d')
     url = "http://api.cafci.org.ar/fondo/{0}/clase/{1}/rendimiento/{2}/{3}?step=1".format(fondo_id, clase_id, str_month_start, str_month_end)
-    print('Going to request: ' + url)
     data = json.load(urllib2.urlopen(url))
     retval = []
     if 'success' in data and data['success']:
         for range in data['data']:
             hasta = range['hasta']
             retval.append({'date': hasta['fecha'], 'value': hasta['valor']})
-        print 'Success'
     else:
         print 'download_month: {0} failed'.format(str_month_start)
     return retval
@@ -69,4 +67,14 @@ def download_and_write_to_file(fondo_id, clase_id):
         for row in data:
             writer.writerow(row)
 
-download_and_write_to_file(151, 151)
+def download_everything(sociedadGerenteId):
+    url = 'http://api.cafci.org.ar/fondo?estado=1&include=entidad;depositaria,entidad;gerente,tipoRenta,region,benchmark,horizonte,duration,tipo_fondo,clase_fondo&limit=0&order=clase_fondos.nombre&sociedadGerenteId={0}'.format(sociedadGerenteId)
+    data = json.load(urllib2.urlopen(url))
+    for fondo in data['data']:
+        for clase in fondo['clase_fondos']:
+            print('Downloading: {0}'.format(clase['nombre']))
+            download_and_write_to_file(fondo['id'], clase['id'])
+            print('Done')
+
+# Fetch Santander:
+download_everything(49)
