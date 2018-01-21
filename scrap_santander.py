@@ -61,8 +61,7 @@ def download_and_write_to_file(fondo_id, clase_id):
 
     data = download_all(most_recent, fondo_id, clase_id, existent)
     with open(filename, 'w') as csvfile:
-        fieldnames = ['date', 'value']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=['date', 'value'])
         writer.writeheader()
         for row in data:
             writer.writerow(row)
@@ -70,11 +69,17 @@ def download_and_write_to_file(fondo_id, clase_id):
 def download_everything(sociedadGerenteId):
     url = 'http://api.cafci.org.ar/fondo?estado=1&include=entidad;depositaria,entidad;gerente,tipoRenta,region,benchmark,horizonte,duration,tipo_fondo,clase_fondo&limit=0&order=clase_fondos.nombre&sociedadGerenteId={0}'.format(sociedadGerenteId)
     data = json.load(urllib2.urlopen(url))
-    for fondo in data['data']:
-        for clase in fondo['clase_fondos']:
-            print('Downloading: {0}'.format(clase['nombre']))
-            download_and_write_to_file(fondo['id'], clase['id'])
-            print('Done')
+    with open('data/fondos.csv', 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=['fondo_id', 'clase_id', 'nombre'])
+        writer.writeheader()
+        for fondo in data['data']:
+            for clase in fondo['clase_fondos']:
+                print('Downloading: {0}'.format(clase['nombre']))
+                fondo_id = fondo['id']
+                clase_id = clase['id']
+                download_and_write_to_file(fondo_id, clase_id)
+                writer.writerow({'fondo_id': fondo_id, 'clase_id': clase_id, 'nombre': clase['nombre']})
+                print('Done')
 
 # Fetch Santander:
 download_everything(49)

@@ -8,34 +8,62 @@
 </head>
 
 <body>
-  The content of the document......
-  <div id="container" style="width:100%; height:400px;"></div>
   <script>
     $(function () {
-      $.get('data/fondo_51_clase_51.csv', function(data) {
-        dates = []
-        values = []
+      $.get('data/fondos.csv', function(data) {
+
+        fondos_id = [];
+        clases_id = [];
+        nombres = [];
         data = data.split('\r\n');
         data.shift();
-        console.log(data)
         data.forEach(function(element) {
-          splitted = element.split(',')
-          dates.push(splitted[0])
-          values.push(Number(splitted[1]))
+          splitted = element.split(',');
+          fondos_id.push(splitted[0]);
+          clases_id.push(splitted[1]);
+          nombres.push(splitted[2]);
         });
-        console.log(dates);
-        console.log(values);
-        var myChart = Highcharts.chart('container', {
-            title: {
-                text: 'Prueba'
-            },
-            xAxis: {
-                categories: dates
-            },
-            series: [{
-                data: values
-            }]
-        });
+
+        var callback = function(fondo_id, clase_id, name) {
+          return function(data) {
+            dates = [];
+            values = [];
+            data = data.split('\r\n');
+            data.shift();
+            data.forEach(function(element) {
+              splitted = element.split(',')
+              dates.push(splitted[0])
+              values.push(Number(splitted[1]))
+            });
+            div_id = 'id_' + fondo_id + '_' + clase_id;
+            var myChart = Highcharts.chart(div_id, {
+                title: {
+                    text: name
+                },
+                xAxis: {
+                    categories: dates
+                },
+                series: [{
+                    data: values
+                }]
+            });
+          }
+        }
+
+        for (i = 0; i < fondos_id.length; i++) {
+          fondo_id = fondos_id[i];
+          clase_id = clases_id[i]
+          div_id = 'id_' + fondo_id + '_' + clase_id;
+          document.body.innerHTML += '<div id="'+ div_id + '"style="width:100%; height:400px;"></div>';
+        }
+
+        for (i = 0; i < fondos_id.length; i++) {
+          fondo_id = fondos_id[i];
+          clase_id = clases_id[i]
+          name = nombres[i];
+          $.get('data/fondo_' + fondo_id + '_clase_' + clase_id + '.csv', callback(fondo_id, clase_id, name));
+        }
+
       });
     });
   </script>
