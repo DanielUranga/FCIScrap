@@ -30,10 +30,18 @@
             values = [];
             data = data.split('\r\n');
             data.shift();
+            oldest_allowd_date = new Date(Date.now());
+            oldest_allowd_date.setFullYear(oldest_allowd_date.getFullYear() - 1);
             data.forEach(function(element) {
-              splitted = element.split(',')
-              dates.push(splitted[0])
-              values.push(Number(splitted[1]))
+              if (element.length > 0) {
+                splitted = element.split(',')
+                date_arr = splitted[0].split('/');
+                date = new Date(date_arr[2], date_arr[1] - 1, date_arr[0], 0, 0, 0, 0);
+                if (oldest_allowd_date.valueOf() < date.valueOf()) {
+                  dates.push(splitted[0]);
+                  values.push(Number(splitted[1]));
+                }
+              }
             });
             div_id = 'id_' + fondo_id + '_' + clase_id;
             var myChart = Highcharts.chart(div_id, {
