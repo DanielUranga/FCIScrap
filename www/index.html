@@ -10,21 +10,33 @@
 <body>
   <script>
     $(function () {
-      $.get('data/fondos.csv', function(data) {
+      $.when($.get('data/fondos.csv'), $.get('data/fondos_to_show.csv')).done(function(data, fondos_to_show_csv) {
 
         fondos_id = [];
         clases_id = [];
         nombres = [];
-        data = data.split('\r\n');
+        fondos_to_show = new Map();
+
+        fondos_to_show_csv = fondos_to_show_csv[0].split('\n')
+        fondos_to_show_csv.shift();
+        fondos_to_show_csv.forEach(function(element) {
+          if (element.length > 0) {
+            fondos_to_show.set(element, true);
+          }
+        });
+
+        data = data[0].split('\r\n');
         data.shift();
         data.forEach(function(element) {
           splitted = element.split(',');
-          fondos_id.push(splitted[0]);
-          clases_id.push(splitted[1]);
-          nombres.push(splitted[2]);
+          if (fondos_to_show.get(splitted[0]+','+splitted[1])) {
+            fondos_id.push(splitted[0]);
+            clases_id.push(splitted[1]);
+            nombres.push(splitted[2]);
+          }
         });
 
-        var callback = function(fondo_id, clase_id, name) {
+        var on_fondo_load = function(fondo_id, clase_id, name) {
           return function(data) {
             dates = [];
             values = [];
@@ -69,7 +81,7 @@
           fondo_id = fondos_id[i];
           clase_id = clases_id[i]
           name = nombres[i];
-          $.get('data/fondo_' + fondo_id + '_clase_' + clase_id + '.csv', callback(fondo_id, clase_id, name));
+          $.get('data/fondo_' + fondo_id + '_clase_' + clase_id + '.csv', on_fondo_load(fondo_id, clase_id, name));
         }
 
       });
