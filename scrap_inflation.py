@@ -1,3 +1,7 @@
+# Inflacion verdadera no tiene mas datos para Argentina :'(. Seguramente tiene
+# que ver con que la inflacion se esta acelerando y al ser pro-Macri no quieren
+# que quede en evidencia.
+
 from selenium import webdriver
 import csv
 import datetime
