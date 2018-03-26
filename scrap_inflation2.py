@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+
 import subprocess
 import csv
 import re
@@ -6,7 +8,9 @@ import json
 import datetime
 import time
 
-driver = webdriver.PhantomJS()
+options = Options()
+options.add_argument("--headless")
+driver = webdriver.Firefox(firefox_options=options)
 page = driver.get('http://estadisticasbcra.com/unidad_de_valor_adquisitivo')
 
 p_element = driver.find_element_by_xpath('/html/body/main/script')
@@ -35,3 +39,5 @@ with open('data/inflation_data.csv', 'w') as csvfile:
         st_time = time.strptime(row['d'].replace('\'', '').replace('u', ''), '%Y-%m-%d')
         date = datetime.date(st_time.tm_year, st_time.tm_mon, st_time.tm_mday)
         writer.writerow({'date': date.strftime('%d/%m/%Y'), 'value': row['v']})
+
+driver.close()
