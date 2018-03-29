@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+<title>Conversor UVA</title>
+
+<head>
+  <meta charset="utf-8"/>
+  <style media="screen">
+    body {
+      font-family: sans-serif;
+      border-color: red;
+    }
+    .container {
+      margin: auto;
+      padding: 5px;
+      width: 300px;
+    }
+    input[type=number], input[type=date] {
+      width: 100%;
+      padding: 8px 10px;
+      margin: 8px 0;
+      display: inline-block;
+      font-size: 125%;
+      box-sizing: border-box;
+    }
+    .result {
+      text-align: center;
+      font-size: 125%;
+    }
+  </style>
+  <script>
+    function on_get(data) {
+
+    }
+
+    function update() {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+          on_get(xmlHttp.responseText);
+      }
+      xmlHttp.open("GET", '/convertidor_uvas?fecha=test&pesos=test', true);
+      xmlHttp.send(null);
+    }
+
+    function on_load() {
+      var now = new Date();
+      var day = ("0" + now.getDate()).slice(-2);
+      var month = ("0" + (now.getMonth() + 1)).slice(-2);
+      var today = (now.getFullYear()-1)+"-"+(month)+"-"+(day) ;
+      document.getElementsByName("fecha_start")[0].setAttribute("value", today);
+    }
+
+  </script>
+</head>
+
+<body onload="on_load()">
+  <div class="container">
+    <label for="pesos_start">AR$:</label>
+    <input type="number" name="pesos_start" min="0" placeholder="1000" oninput="update()">
+  </div>
+
+  <div class="container">
+    <label for="fecha_start">del dia:</label>
+    <input type="date" name="fecha_start" oninput="update()">
+  </div>
+
+  <div class="container">
+    <p class="result">Equivalen hoy a XXXXAR$</p>
+  </div>
+</body>
+</html>
