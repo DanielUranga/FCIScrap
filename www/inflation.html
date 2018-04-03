@@ -30,7 +30,7 @@
   </style>
   <script>
     function on_get(data) {
-
+      document.getElementsByClassName("result")[0].innerHTML = "Equivalen hoy a "+data+"$"
     }
 
     function update() {
@@ -39,7 +39,13 @@
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
           on_get(xmlHttp.responseText);
       }
-      xmlHttp.open("GET", '/convertidor_uvas?fecha=test&pesos=test', true);
+      var now = new Date();
+      var day = ("0" + now.getDate()).slice(-2);
+      var month = ("0" + (now.getMonth() + 1)).slice(-2);
+      var today = (now.getFullYear())+"-"+(month)+"-"+(day)
+      var start_date = document.getElementsByName("fecha_start")[0].value
+      var start_value = document.getElementsByName("pesos_start")[0].value
+      xmlHttp.open("GET", "api/money_value?start_date="+start_date+"&start_value="+start_value+"&end_date="+today, true);
       xmlHttp.send(null);
     }
 
