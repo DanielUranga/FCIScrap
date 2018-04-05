@@ -18,6 +18,7 @@ def convert_date(date_in):
 class TestMoneyValue(unittest.TestCase):
 
     base_url = 'http://127.0.0.1:5000/money_value'
+    limits_url = 'http://127.0.0.1:5000/money_value_date_limits'
 
     def test_connect_with_no_args(self):
         response = requests.get(self.base_url)
@@ -76,6 +77,24 @@ class TestMoneyValue(unittest.TestCase):
                                         }\
                                 )
         self.assertNotEqual(response.status_code, 200)
+
+    def test_first_last_date_endpoint(self):
+        first_date = ''
+        last_date = ''
+        with open('data/inflation_data.csv', 'r') as csvfile:
+            read = csv.reader(csvfile, delimiter=',')
+            headers = next(read)[1:]
+            row = next(read)
+            real_money_value = 1420
+            first_date = convert_date(row[0])
+            for row in read:
+                last_date = convert_date(row[0])
+
+        response = requests.get(self.limits_url)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(content['first_date'], first_date)
+        self.assertEqual(content['last_date'], last_date)
 
 if __name__ == '__main__':
     server = Process(target = run_server)

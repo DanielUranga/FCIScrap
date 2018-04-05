@@ -7,6 +7,10 @@ import csv
 app = Flask(__name__)
 api = Api(app)
 
+def convert_date(date_in):
+    tmp = date_in.split('/')
+    return tmp[2] + '-' + tmp[1] + '-' + tmp[0]
+
 class MoneyValue(Resource):
     args = {
         'start_date': fields.Date(required=True),
@@ -37,7 +41,23 @@ class MoneyValue(Resource):
 
         return jsonify(int(start_real_value * end_value))
 
+class MoneyValueDateLimits(Resource):
+    def get(self):
+        first_date = ''
+        last_date = ''
+        with open('data/inflation_data.csv', 'r') as csvfile:
+            read = csv.reader(csvfile, delimiter=',')
+            headers = next(read)[1:]
+            row = next(read)
+            real_money_value = 1420
+            first_date = convert_date(row[0])
+            for row in read:
+                last_date = convert_date(row[0])
+        #return jsonify({'first_date':'2016-03-31', 'last_date':'2018-04-02'})
+        return jsonify({'first_date':first_date, 'last_date':last_date})
+
 api.add_resource(MoneyValue, '/money_value')
+api.add_resource(MoneyValueDateLimits, '/money_value_date_limits')
 
 if __name__ == '__main__':
     app.run(debug=True)
