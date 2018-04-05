@@ -59,6 +59,24 @@ class TestMoneyValue(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), end_value)
 
+    def test_returns_error_on_date_with_no_data(self):
+        response = requests.get(self.base_url,\
+                                data = {'start_date':'1915-01-03',\
+                                        'start_value':'100',\
+                                        'end_date':'2500-01-03'\
+                                        }\
+                                )
+        self.assertNotEqual(response.status_code, 200)
+
+    def test_returns_error_on_start_after_end(self):
+        response = requests.get(self.base_url,\
+                                data = {'start_date':'2017-01-03',\
+                                        'start_value':'100',\
+                                        'end_date':'2017-01-02'\
+                                        }\
+                                )
+        self.assertNotEqual(response.status_code, 200)
+
 if __name__ == '__main__':
     server = Process(target = run_server)
     server.start()
