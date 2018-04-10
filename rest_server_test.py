@@ -7,6 +7,7 @@ import signal
 import requests
 import csv
 import json
+import datetime
 
 def run_server():
     rest_server.app.run()
@@ -95,6 +96,21 @@ class TestMoneyValue(unittest.TestCase):
         content = json.loads(response.content)
         self.assertEqual(content['first_date'], first_date)
         self.assertEqual(content['last_date'], last_date)
+
+    def test_yesterday_value_is_not_negative(self):
+        first_date = '2017-01-03'
+        response = requests.get(self.limits_url)
+        content = json.loads(response.content)
+        last_date = content['last_date']
+        last_date = datetime.datetime.strptime(last_date, '%Y-%m-%d')
+        last_date = last_date + datetime.timedelta(days=1)
+        response = requests.get(self.base_url,\
+                                data = {'start_date':first_date,\
+                                        'start_value':'100',\
+                                        'end_date':last_date\
+                                        }\
+                                )
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     server = Process(target = run_server)
