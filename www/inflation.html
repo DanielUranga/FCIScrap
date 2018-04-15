@@ -29,7 +29,7 @@
     }
   </style>
   <script>
-    function on_get(data) {
+    function on_update_response(data) {
       document.getElementsByClassName("result")[0].innerHTML = "Equivalen hoy a "+data+"$"
     }
 
@@ -37,7 +37,7 @@
       var xmlHttp = new XMLHttpRequest();
       xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-          on_get(xmlHttp.responseText);
+          on_update_response(xmlHttp.responseText);
       }
       var now = new Date();
       var day = ("0" + now.getDate()).slice(-2);
@@ -49,12 +49,28 @@
       xmlHttp.send(null);
     }
 
+    function on_load_response(data) {
+      var obj = JSON.parse(data);
+      console.log(obj);
+      fecha_start = document.getElementsByName("fecha_start")[0];
+      fecha_start.setAttribute("min", obj.first_date);
+      fecha_start.setAttribute("max", obj.last_date);
+    }
+
     function on_load() {
       var now = new Date();
       var day = ("0" + now.getDate()).slice(-2);
       var month = ("0" + (now.getMonth() + 1)).slice(-2);
       var today = (now.getFullYear()-1)+"-"+(month)+"-"+(day) ;
       document.getElementsByName("fecha_start")[0].setAttribute("value", today);
+
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+          on_load_response(xmlHttp.responseText);
+      }
+      xmlHttp.open("GET", "api/money_value_date_limits", true);
+      xmlHttp.send(null);
     }
 
   </script>

@@ -104,6 +104,7 @@ class TestMoneyValue(unittest.TestCase):
         last_date = content['last_date']
         last_date = datetime.datetime.strptime(last_date, '%Y-%m-%d')
         last_date = last_date + datetime.timedelta(days=1)
+        print(last_date)
         response = requests.get(self.base_url,\
                                 data = {'start_date':first_date,\
                                         'start_value':'100',\
