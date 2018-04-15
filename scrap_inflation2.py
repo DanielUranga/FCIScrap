@@ -7,6 +7,7 @@ import re
 import json
 import datetime
 import time
+from datetime import timedelta
 
 options = Options()
 options.add_argument("--headless")
@@ -35,9 +36,14 @@ data = json.loads(subprocess.check_output(command))
 with open('data/inflation_data.csv', 'w') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=['date', 'value'])
     writer.writeheader()
+    consecutive_date = None
     for row in data:
         st_time = time.strptime(row['d'].replace('\'', '').replace('u', ''), '%Y-%m-%d')
         date = datetime.date(st_time.tm_year, st_time.tm_mon, st_time.tm_mday)
-        writer.writerow({'date': date.strftime('%d/%m/%Y'), 'value': row['v']})
+        if consecutive_date == None:
+            consecutive_date = date
+        while consecutive_date < date:
+            consecutive_date = consecutive_date + timedelta(days=1)
+            writer.writerow({'date': consecutive_date.strftime('%d/%m/%Y'), 'value': row['v']})
 
 driver.close()
