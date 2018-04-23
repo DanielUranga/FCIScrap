@@ -30,7 +30,9 @@
   </style>
   <script>
     function on_update_response(data) {
-      document.getElementsByClassName("result")[0].innerHTML = "Equivalen hoy a "+data+"$"
+      var obj = JSON.parse(data);
+      document.getElementsByName("valor_real")[0].innerHTML = "Compraban "+obj.real.toFixed(2)+" UVAs";
+      document.getElementsByName("valor_devaluado")[0].innerHTML = "Equivalen hoy a "+obj.devalued+"$";
     }
 
     function update() {
@@ -42,9 +44,9 @@
       var now = new Date();
       var day = ("0" + now.getDate()).slice(-2);
       var month = ("0" + (now.getMonth() + 1)).slice(-2);
-      var today = (now.getFullYear())+"-"+(month)+"-"+(day)
-      var start_date = document.getElementsByName("fecha_start")[0].value
-      var start_value = document.getElementsByName("pesos_start")[0].value
+      var today = (now.getFullYear())+"-"+(month)+"-"+(day);
+      var start_date = document.getElementsByName("fecha_start")[0].value;
+      var start_value = document.getElementsByName("pesos_start")[0].value;
       xmlHttp.open("GET", "api/money_value?start_date="+start_date+"&start_value="+start_value+"&end_date="+today, true);
       xmlHttp.send(null);
     }
@@ -87,7 +89,8 @@
   </div>
 
   <div class="container">
-    <p class="result">Equivalen hoy a XXXXAR$</p>
+    <p class="result" name='valor_real'>Compraban XXXX UVAs</p>
+    <p class="result" name='valor_devaluado'>Que equivalen hoy a XXXXAR$</p>
   </div>
 </body>
 </html>

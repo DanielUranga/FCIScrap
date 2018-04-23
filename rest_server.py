@@ -49,7 +49,7 @@ class MoneyValue(Resource):
         if end_value < 0:
             abort(422, "No data available for that end_date")
 
-        return jsonify(int(start_real_value * end_value))
+        return jsonify({'devalued': int(start_real_value * end_value), 'real': start_real_value})
 
 class MoneyValueDateLimits(Resource):
     def get(self):

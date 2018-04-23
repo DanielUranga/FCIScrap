@@ -59,7 +59,9 @@ class TestMoneyValue(unittest.TestCase):
                                         }\
                                 )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content), end_value)
+        content = json.loads(response.content)
+        self.assertEqual(content['devalued'], end_value)
+        self.assertTrue('real' in content)
 
     def test_returns_error_on_date_with_no_data(self):
         response = requests.get(self.base_url,\
