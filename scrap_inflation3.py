@@ -4,14 +4,17 @@ import subprocess
 from bs4 import BeautifulSoup
 import csv
 import datetime
+from datetime import date
 import time
 from datetime import timedelta
+import urllib
 
+today_url_encoded = urllib.quote_plus(date.today().strftime('%d/%m/%Y'))
 command = [
     'curl',
     'http://www.bcra.gov.ar/PublicacionesEstadisticas/Principales_variables_datos.asp',
     '--data',
-    'desde=31%2F03%2F2016&hasta=31%2F04%2F2016&fecha=Fecha_Cvs&descri=22&campo=Cvs&primeravez=1&alerta=5'
+    'desde=31%2F03%2F2016&hasta='+today_url_encoded+'&fecha=Fecha_Cvs&descri=22&campo=Cvs&primeravez=1&alerta=5'
 ]
 
 html = subprocess.check_output(command)
