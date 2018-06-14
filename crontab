@@ -1,0 +1,1 @@
+*/30 * * * * /scrap.sh >/dev/null 2>&1
