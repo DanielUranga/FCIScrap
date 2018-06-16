@@ -14,19 +14,13 @@ COPY nginx_proxy.conf /etc/nginx/sites-enabled/
 
 COPY rest_server.py .
 COPY scrap_inflation3.py .
-COPY scrap.sh .
+COPY scrap.sh /etc/cron.hourly/scrap
 COPY run.sh .
 COPY requirements.txt .
 
-# Add crontab file in the cron directory
-COPY crontab /etc/cron.d/simple-cron
-
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/simple-cron
-
 RUN rm /etc/nginx/sites-enabled/default
 RUN mkdir data
-RUN chmod +x scrap.sh
+RUN chmod +x /etc/cron.hourly/scrap
 RUN chmod +x run.sh
 RUN pip install -r requirements.txt
 
