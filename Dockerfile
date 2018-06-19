@@ -16,6 +16,7 @@ COPY rest_server.py .
 COPY run.sh .
 COPY requirements.txt .
 COPY periodically_scrap.py .
+COPY scrap_inflation3.py .
 
 RUN rm /etc/nginx/sites-enabled/default
 RUN mkdir data
